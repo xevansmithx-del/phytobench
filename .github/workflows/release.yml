@@ -37,7 +37,13 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: phytobench-release-dist
-          path: dist/*
+          path: |
+            dist/*
+            release/AVO_RECEIPT.json
+            release/CLAIM_BOUNDARY.json
+            release/SHA256SUMS.txt
+            uv.lock
+            validate_release.py
           if-no-files-found: error
           retention-days: 14
 
@@ -55,10 +61,21 @@ jobs:
           path: release-dist
       - name: Reverify hashes
         working-directory: release-dist
-        run: sha256sum --check SHA256SUMS.txt
+        run: |
+          sha256sum --check release/SHA256SUMS.txt
+          cp release/SHA256SUMS.txt RELEASE_SHA256SUMS.txt
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" release-dist/* \
-            --repo "$GITHUB_REPOSITORY" --generate-notes --verify-tag --latest
+          release_channel=--latest
+          case "$GITHUB_REF_NAME" in
+            *a[0-9]*|*b[0-9]*|*rc[0-9]*|*dev[0-9]*) release_channel=--prerelease ;;
+          esac
+          gh release create "$GITHUB_REF_NAME" \
+            release-dist/dist/* \
+            release-dist/release/AVO_RECEIPT.json \
+            release-dist/release/CLAIM_BOUNDARY.json \
+            release-dist/RELEASE_SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --generate-notes --verify-tag \
+            "$release_channel"

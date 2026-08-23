@@ -22,7 +22,7 @@ from phytobench.canonical import file_sha256, load_json
 from phytobench.freeze import freeze_bundle, verify_bundle
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "0.1.0a1"
+VERSION = "0.1.0a2"
 WHEEL = f"phytobench-{VERSION}-py3-none-any.whl"
 SDIST = f"phytobench-{VERSION}.tar.gz"
 SOURCE_DATE_EPOCH = "1787443200"
@@ -326,6 +326,89 @@ def _publish_dist(wheel: Path, sdist: Path) -> tuple[str, str, str]:
     return wheel_hash, sdist_hash, file_sha256(destination / "SHA256SUMS.txt")
 
 
+def _load_release_manifest() -> dict[str, str]:
+    entries: dict[str, str] = {}
+    for line in (ROOT / "release" / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        digest, separator, relative = line.partition("  ")
+        if (
+            separator != "  "
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+            or not _safe_archive_name(relative)
+            or relative in entries
+        ):
+            raise ValidationError("release manifest is malformed or contains duplicate paths")
+        entries[relative] = digest
+    return entries
+
+
+def _verify_release_receipts(
+    wheel_hash: str,
+    sdist_hash: str,
+    dist_manifest_hash: str,
+    test_count: int,
+    checks: Checks,
+) -> None:
+    avo = load_json(ROOT / "release" / "AVO_RECEIPT.json")
+    claim = load_json(ROOT / "release" / "CLAIM_BOUNDARY.json")
+    checks.require(avo["schema_version"] == "avo-supervisor-receipt-v1", "AVO schema changed")
+    checks.require(avo["version"] == VERSION, "AVO version is not release-bound")
+    checks.require(
+        avo["status"] == "SOFTWARE_ONLY_PASS_WITH_EMPIRICAL_BLOCKER", "AVO status changed"
+    )
+    checks.require(avo["software_release_gate"] == "PASS", "AVO software gate is not PASS")
+    checks.require(avo["unit_and_adversarial_tests"] == test_count, "AVO test count drifted")
+    checks.require(avo["wheel_sha256"] == wheel_hash, "AVO wheel hash drifted")
+    checks.require(avo["sdist_sha256"] == sdist_hash, "AVO sdist hash drifted")
+    checks.require(
+        avo["dist_manifest_sha256"] == dist_manifest_hash, "AVO dist manifest hash drifted"
+    )
+    checks.require(avo["locked_causal_rows"] == 0, "AVO causal row count changed")
+    checks.require(avo["locked_causal_independent_n"] == 0, "AVO causal N changed")
+    checks.require(avo["locked_null_rows"] == 0, "AVO null row count changed")
+    checks.require(avo["locked_null_independent_n"] == 0, "AVO null N changed")
+    checks.require(avo["empirical_n"] == 0, "AVO empirical N changed")
+    checks.require(avo["benchmark_ready"] is False, "AVO opened benchmark readiness")
+    checks.require(avo["breakthrough_validated"] is False, "AVO claims a breakthrough")
+    checks.require(avo["execution_authorized"] is False, "AVO grants execution authority")
+
+    checks.require(
+        claim["schema_version"] == "phytobench-claim-boundary-v1",
+        "claim-boundary schema changed",
+    )
+    checks.require(claim["version"] == VERSION, "claim boundary is not release-bound")
+    checks.require(claim["locked_causal_rows"] == 0, "claim boundary causal rows changed")
+    checks.require(claim["locked_null_rows"] == 0, "claim boundary null rows changed")
+    checks.require(claim["empirical_n"] == 0, "claim boundary empirical N changed")
+    checks.require(claim["benchmark_ready"] is False, "claim boundary opened readiness")
+    checks.require(claim["breakthrough_validated"] is False, "claim boundary claims a breakthrough")
+    checks.require(
+        claim["causal_discovery_validated"] is False,
+        "claim boundary claims causal discovery",
+    )
+    checks.require(claim["execution_authorized"] is False, "claim boundary grants authority")
+
+    release_manifest = _load_release_manifest()
+    expected_paths = {
+        f"dist/{WHEEL}",
+        f"dist/{SDIST}",
+        "dist/SHA256SUMS.txt",
+        "release/AVO_RECEIPT.json",
+        "release/CLAIM_BOUNDARY.json",
+        "uv.lock",
+        "validate_release.py",
+    }
+    checks.require(set(release_manifest) == expected_paths, "release manifest inventory drifted")
+    checks.require(
+        all(file_sha256(ROOT / path) == digest for path, digest in release_manifest.items()),
+        "release manifest hash verification failed",
+    )
+    checks.require(
+        avo["validator_checks"] == checks.count + 1,
+        f"AVO validator count drifted; expected {checks.count + 1}",
+    )
+
+
 def validate(full: bool) -> tuple[int, int, str, str, str]:
     checks = Checks()
     checks.require(__version__ == VERSION, "imported version mismatch")
@@ -389,6 +472,7 @@ def validate(full: bool) -> tuple[int, int, str, str, str]:
             for version in ("3.10", "3.11", "3.12", "3.13"):
                 _installed_replay(wheel, sdist, temporary, checks, version)
             wheel_hash, sdist_hash, manifest_hash = _publish_dist(wheel, sdist)
+            _verify_release_receipts(wheel_hash, sdist_hash, manifest_hash, test_count, checks)
         else:
             wheel_hash = sdist_hash = manifest_hash = "not-built"
     return checks.count, test_count, wheel_hash, sdist_hash, manifest_hash

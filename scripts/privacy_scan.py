@@ -42,10 +42,10 @@ FORBIDDEN_SUFFIXES = {
 MAX_PUBLIC_FILE_BYTES = 2 * 1024 * 1024
 
 SECRET_PATTERNS = {
-    "GitHub token": re.compile("gh" + r"[opsu]_[A-Za-z0-9]{20,}"),
-    "OpenAI-style token": re.compile("s" + r"k-[A-Za-z0-9_-]{20,}"),
-    "AWS access key": re.compile("AK" + r"IA[0-9A-Z]{16}"),
-    "private key": re.compile("BEGIN " + r"(?:RSA |EC |OPENSSH )?PRIVATE KEY"),
+    "SECRET_GITHUB_TOKEN": re.compile("gh" + r"[opsu]_[A-Za-z0-9]{20,}"),
+    "SECRET_OPENAI_TOKEN": re.compile("s" + r"k-[A-Za-z0-9_-]{20,}"),
+    "SECRET_AWS_ACCESS_KEY": re.compile("AK" + r"IA[0-9A-Z]{16}"),
+    "SECRET_PRIVATE_KEY": re.compile("BEGIN " + r"(?:RSA |EC |OPENSSH )?PRIVATE KEY"),
 }
 LOCAL_PATH_PATTERN = re.compile(r"(?<![A-Za-z0-9.:])/(?:Users|home)/[^/\s]+/")
 
@@ -67,29 +67,29 @@ def scan(root: Path) -> list[str]:
         if path.name in GENERATED_FILE_NAMES:
             continue
         if path.is_symlink():
-            issues.append(f"symlink is forbidden: {relative}")
+            issues.append("FORBIDDEN_SYMLINK")
             continue
         if not path.exists():
             continue
         if path.name in FORBIDDEN_NAMES:
-            issues.append(f"credential-like filename is forbidden: {relative}")
+            issues.append("CREDENTIAL_FILENAME")
         lower = relative.lower()
         if any(lower.endswith(suffix) for suffix in FORBIDDEN_SUFFIXES):
-            issues.append(f"raw biological payload is forbidden: {relative}")
+            issues.append("RAW_BIOLOGICAL_PAYLOAD")
         size = path.stat().st_size
         if size > MAX_PUBLIC_FILE_BYTES:
-            issues.append(f"public file exceeds {MAX_PUBLIC_FILE_BYTES} bytes: {relative}")
+            issues.append("OVERSIZED_PUBLIC_FILE")
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
-            issues.append(f"unexpected binary file: {relative}")
+            issues.append("UNEXPECTED_BINARY_FILE")
             continue
-        for label, pattern in SECRET_PATTERNS.items():
+        for issue_code, pattern in SECRET_PATTERNS.items():
             if pattern.search(text):
-                issues.append(f"{label} pattern found: {relative}")
+                issues.append(issue_code)
         if LOCAL_PATH_PATTERN.search(text):
-            issues.append(f"private absolute path found: {relative}")
+            issues.append("PRIVATE_ABSOLUTE_PATH")
     return issues
 
 
@@ -98,8 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     root = Path(arguments[0]) if arguments else Path.cwd()
     issues = scan(root)
     if issues:
-        for issue in issues:
-            print(f"FAIL: {issue}")
+        print("FAIL privacy scan: forbidden public-release material detected")
         return 2
     files = _walk_files(root.resolve())
     print(f"PASS privacy scan: {len(files)} files")

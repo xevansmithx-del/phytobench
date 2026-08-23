@@ -26,6 +26,19 @@ def test_privacy_scanner_rejects_secrets_paths_and_raw_payloads(tmp_path):
     (tmp_path / "local.txt").write_text("/" + "Users/private/research/data", encoding="utf-8")
     (tmp_path / "sample.vcf").write_text("synthetic", encoding="utf-8")
     issues = module.scan(tmp_path)
-    assert any("GitHub token" in issue for issue in issues)
-    assert any("private absolute path" in issue for issue in issues)
-    assert any("raw biological payload" in issue for issue in issues)
+    assert "SECRET_GITHUB_TOKEN" in issues
+    assert "PRIVATE_ABSOLUTE_PATH" in issues
+    assert "RAW_BIOLOGICAL_PAYLOAD" in issues
+
+
+def test_privacy_scanner_cli_never_logs_tainted_paths_or_matches(tmp_path, capsys):
+    module = _scanner_module()
+    secret = "gh" + "o_" + "B" * 24
+    sensitive_name = "private-subject-path.txt"
+    (tmp_path / sensitive_name).write_text(secret, encoding="utf-8")
+
+    assert module.main([str(tmp_path)]) == 2
+    output = capsys.readouterr().out
+    assert output == "FAIL privacy scan: forbidden public-release material detected\n"
+    assert sensitive_name not in output
+    assert secret not in output

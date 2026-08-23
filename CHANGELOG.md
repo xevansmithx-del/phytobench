@@ -2,6 +2,12 @@
 
 All notable changes to PhytoBench are documented here.
 
+## 0.1.0-alpha.2 — 2026-08-23
+
+- Prevent privacy-scan failure diagnostics from logging matched material or source paths.
+- Add a regression test that enforces constant, non-tainted failure output.
+- Make CI artifact paths version-derived and mark alpha/beta/RC tags as GitHub prereleases.
+
 ## 0.1.0-alpha.1 — 2026-08-23
 
 - Add strict source-registry, benchmark-row, and freeze-contract schemas.
