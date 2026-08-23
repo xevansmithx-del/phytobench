@@ -16,6 +16,7 @@ def _scanner_module():
 def test_privacy_scanner_accepts_safe_text(tmp_path):
     module = _scanner_module()
     (tmp_path / "README.md").write_text("synthetic metadata only\n", encoding="utf-8")
+    (tmp_path / ".coverage").write_bytes(b"\x00generated coverage database")
     assert module.scan(tmp_path) == []
 
 

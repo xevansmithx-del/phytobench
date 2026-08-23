@@ -24,6 +24,7 @@ FORBIDDEN_NAMES = {
     "id_ed25519",
     "secrets.json",
 }
+GENERATED_FILE_NAMES = {".coverage", "coverage.xml"}
 FORBIDDEN_SUFFIXES = {
     ".bam",
     ".bcf",
@@ -63,6 +64,8 @@ def scan(root: Path) -> list[str]:
     issues: list[str] = []
     for path in sorted(files):
         relative = path.relative_to(root).as_posix()
+        if path.name in GENERATED_FILE_NAMES:
+            continue
         if path.is_symlink():
             issues.append(f"symlink is forbidden: {relative}")
             continue
