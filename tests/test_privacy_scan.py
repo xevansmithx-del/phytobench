@@ -42,3 +42,17 @@ def test_privacy_scanner_cli_never_logs_tainted_paths_or_matches(tmp_path, capsy
     assert output == "FAIL privacy scan: forbidden public-release material detected\n"
     assert sensitive_name not in output
     assert secret not in output
+
+
+def test_privacy_scanner_cli_suppresses_filesystem_exception_details(tmp_path, capsys, monkeypatch):
+    module = _scanner_module()
+    sensitive_path = "/" + "Users/private-subject/controlled-study"
+
+    def fail_scan(_root):
+        raise OSError(f"cannot read {sensitive_path}")
+
+    monkeypatch.setattr(module, "scan", fail_scan)
+    assert module.main([str(tmp_path)]) == 2
+    output = capsys.readouterr().out
+    assert output == "FAIL privacy scan: unable to complete safe scan\n"
+    assert sensitive_path not in output

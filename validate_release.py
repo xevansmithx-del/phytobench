@@ -22,7 +22,7 @@ from phytobench.canonical import file_sha256, load_json
 from phytobench.freeze import freeze_bundle, verify_bundle
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "0.1.0a2"
+VERSION = "0.1.0a3"
 WHEEL = f"phytobench-{VERSION}-py3-none-any.whl"
 SDIST = f"phytobench-{VERSION}.tar.gz"
 SOURCE_DATE_EPOCH = "1787443200"
@@ -473,6 +473,22 @@ def validate(full: bool) -> tuple[int, int, str, str, str]:
                 _installed_replay(wheel, sdist, temporary, checks, version)
             wheel_hash, sdist_hash, manifest_hash = _publish_dist(wheel, sdist)
             _verify_release_receipts(wheel_hash, sdist_hash, manifest_hash, test_count, checks)
+            staged_release = temporary / "flat-release-assets"
+            _run(
+                [
+                    "uv",
+                    "run",
+                    "--frozen",
+                    "--no-sync",
+                    "python",
+                    "scripts/stage_release_assets.py",
+                    str(staged_release),
+                ]
+            )
+            _run(
+                ["sha256sum", "--check", "RELEASE_SHA256SUMS.txt"],
+                cwd=staged_release,
+            )
         else:
             wheel_hash = sdist_hash = manifest_hash = "not-built"
     return checks.count, test_count, wheel_hash, sdist_hash, manifest_hash

@@ -6,7 +6,7 @@ counts connected dependence components rather than file rows, and refuses evalua
 licensing, pre-truth, preregistration, statistical-denominator, or external-holdout controls are
 missing.
 
-**Status:** `0.1.0-alpha.2`, software-only research release. The public locked benchmark contains
+**Status:** `0.1.0-alpha.3`, software-only research release. The public locked benchmark contains
 zero causal rows, zero null rows, and empirical `N=0`. No biological performance, causal-gene,
 gene-editing target, experimental authorization, or scientific-breakthrough claim is established.
 

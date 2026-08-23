@@ -95,13 +95,17 @@ def scan(root: Path) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     arguments = argv if argv is not None else sys.argv[1:]
-    root = Path(arguments[0]) if arguments else Path.cwd()
-    issues = scan(root)
+    try:
+        root = Path(arguments[0]) if arguments else Path.cwd()
+        issues = scan(root)
+        file_count = len(_walk_files(root.resolve()))
+    except (OSError, RuntimeError, UnicodeError, ValueError):
+        print("FAIL privacy scan: unable to complete safe scan")
+        return 2
     if issues:
         print("FAIL privacy scan: forbidden public-release material detected")
         return 2
-    files = _walk_files(root.resolve())
-    print(f"PASS privacy scan: {len(files)} files")
+    print(f"PASS privacy scan: {file_count} files")
     return 0
 
 

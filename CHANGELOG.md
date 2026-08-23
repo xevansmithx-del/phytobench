@@ -2,6 +2,12 @@
 
 All notable changes to PhytoBench are documented here.
 
+## 0.1.0-alpha.3 — 2026-08-23
+
+- Suppress filesystem exception details in privacy-scan CLI diagnostics.
+- Stage a flat, self-verifying GitHub release bundle with every receipt-bound asset.
+- Replay the consumer release manifest inside the full validator and tagged-release workflow.
+
 ## 0.1.0-alpha.2 — 2026-08-23
 
 - Prevent privacy-scan failure diagnostics from logging matched material or source paths.
