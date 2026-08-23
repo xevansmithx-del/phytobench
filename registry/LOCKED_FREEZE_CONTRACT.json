@@ -1,0 +1,17 @@
+{
+  "schema_version": "phytobench-freeze-contract-v1",
+  "benchmark_id": "phytobench-public-empty-v1",
+  "freeze_id": "empty-software-release-0.1.0a1",
+  "purpose": "CURATION",
+  "created_at": "2026-08-23T00:00:00Z",
+  "distribution_scope": "PUBLIC",
+  "selected_row_ids": [],
+  "external_holdout_species_taxon_ids": [],
+  "require_orthogroup_disjoint": true,
+  "min_causal_independent_units": 35,
+  "min_null_independent_units": 73,
+  "ruleset_sha256": "",
+  "code_artifact_sha256": "",
+  "analysis_plan_sha256": "",
+  "power_analysis_sha256": ""
+}

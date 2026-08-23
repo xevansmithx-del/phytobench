@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xevansmithx-del/phytobench/schema/benchmark_rows.schema.json",
+  "title": "PhytoBench benchmark row intake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "rows"],
+  "properties": {
+    "schema_version": {"const": "phytobench-benchmark-rows-v1"},
+    "rows": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/row"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "date": {"type": "string", "format": "date"},
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 200},
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row_id",
+        "row_kind",
+        "split",
+        "species_taxon_id",
+        "species_name",
+        "trait_id",
+        "interval_id"
+      ],
+      "properties": {
+        "row_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+        "row_kind": {"enum": ["CAUSAL", "NULL"]},
+        "split": {
+          "enum": [
+            "DEVELOPMENT",
+            "CALIBRATION",
+            "INTERNAL_HOLDOUT",
+            "EXTERNAL_SPECIES_HOLDOUT"
+          ]
+        },
+        "species_taxon_id": {"type": "string", "pattern": "^NCBITaxon:[1-9][0-9]*$"},
+        "species_name": {"$ref": "#/$defs/identifier"},
+        "trait_id": {"$ref": "#/$defs/identifier"},
+        "trait_direction": {"$ref": "#/$defs/identifier"},
+        "interval_id": {"$ref": "#/$defs/identifier"},
+        "reference_assembly": {"$ref": "#/$defs/identifier"},
+        "interval_coordinates": {"$ref": "#/$defs/identifier"},
+        "truth_gene_id": {"type": "string", "maxLength": 200},
+        "null_type": {
+          "type": "string",
+          "enum": [
+            "",
+            "PHENOTYPE_PERMUTATION",
+            "INTERVAL_PERMUTATION",
+            "PARALOG_COLLISION",
+            "NO_SIGNAL",
+            "CORRUPTED_PROVENANCE"
+            ,"EMPIRICAL_EQUIVALENCE"
+          ]
+        },
+        "null_class": {
+          "type": "string",
+          "enum": [
+            "",
+            "EMPIRICAL_EQUIVALENCE_NULL",
+            "MATCHED_DECOY",
+            "VALIDATOR_NEGATIVE"
+          ]
+        },
+        "truth_strength": {
+          "type": "string",
+          "enum": [
+            "",
+            "DIRECT_CAUSAL_VALIDATION",
+            "COMPLEMENTATION_OR_RESCUE",
+            "MULTIPLE_INDEPENDENT_ALLELES",
+            "CLONED_LOCUS_WITH_FUNCTIONAL_VALIDATION"
+          ]
+        },
+        "primary_truth_source_id": {"type": "string", "maxLength": 128},
+        "pretruth_source_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 128}
+        },
+        "all_source_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 128}
+        },
+        "truth_disclosure_date": {"$ref": "#/$defs/date"},
+        "evidence_cutoff_date": {"$ref": "#/$defs/date"},
+        "study_id": {"$ref": "#/$defs/identifier"},
+        "cohort_id": {"$ref": "#/$defs/identifier"},
+        "population_id": {"$ref": "#/$defs/identifier"},
+        "gene_family_id": {"$ref": "#/$defs/identifier"},
+        "orthogroup_id": {"$ref": "#/$defs/identifier"},
+        "lineage_root_digest": {"$ref": "#/$defs/sha256"},
+        "phenotype_protocol_digest": {"$ref": "#/$defs/sha256"},
+        "panel_digest": {"$ref": "#/$defs/sha256"},
+        "truth_evidence_digest": {"$ref": "#/$defs/sha256"},
+        "pretruth_evidence_digest": {"$ref": "#/$defs/sha256"}
+        ,"null_authority_source_id": {"type": "string", "maxLength": 128}
+        ,"null_generation_date": {"$ref": "#/$defs/date"}
+        ,"construction_method_digest": {"$ref": "#/$defs/sha256"}
+        ,"equivalence_margin_digest": {"$ref": "#/$defs/sha256"}
+        ,"effect_interval_digest": {"$ref": "#/$defs/sha256"}
+        ,"power_receipt_sha256": {"$ref": "#/$defs/sha256"}
+        ,"positive_control_receipt_sha256": {"$ref": "#/$defs/sha256"}
+        ,"independent_qc_receipt_sha256": {"$ref": "#/$defs/sha256"}
+        ,"curator_a_id": {"$ref": "#/$defs/identifier"}
+        ,"curator_b_id": {"$ref": "#/$defs/identifier"}
+        ,"adjudicator_id": {"$ref": "#/$defs/identifier"}
+        ,"curation_review_a_digest": {"$ref": "#/$defs/sha256"}
+        ,"curation_review_b_digest": {"$ref": "#/$defs/sha256"}
+        ,"adjudication_receipt_digest": {"$ref": "#/$defs/sha256"}
+        ,"license_review_digest": {"$ref": "#/$defs/sha256"}
+        ,"leakage_review_digest": {"$ref": "#/$defs/sha256"}
+        ,"grouping_review_digest": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

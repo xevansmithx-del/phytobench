@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/xevansmithx-del/phytobench/schema/freeze_contract.schema.json",
+  "title": "PhytoBench freeze contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "freeze_id",
+    "purpose",
+    "created_at",
+    "distribution_scope",
+    "selected_row_ids",
+    "external_holdout_species_taxon_ids",
+    "require_orthogroup_disjoint",
+    "min_causal_independent_units",
+    "min_null_independent_units",
+    "ruleset_sha256",
+    "code_artifact_sha256",
+    "analysis_plan_sha256",
+    "power_analysis_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "phytobench-freeze-contract-v1"},
+    "benchmark_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "freeze_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"},
+    "purpose": {"enum": ["CURATION", "EVALUATION", "EXTERNAL_REPLICATION"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "distribution_scope": {"enum": ["PUBLIC", "PRIVATE"]},
+    "selected_row_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+    },
+    "external_holdout_species_taxon_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^NCBITaxon:[1-9][0-9]*$"}
+    },
+    "require_orthogroup_disjoint": {"type": "boolean"},
+    "min_causal_independent_units": {"type": "integer", "minimum": 35},
+    "min_null_independent_units": {"type": "integer", "minimum": 73},
+    "ruleset_sha256": {"$ref": "#/$defs/optionalSha256"},
+    "code_artifact_sha256": {"$ref": "#/$defs/optionalSha256"},
+    "analysis_plan_sha256": {"$ref": "#/$defs/optionalSha256"},
+    "power_analysis_sha256": {"$ref": "#/$defs/optionalSha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "optionalSha256": {
+      "oneOf": [
+        {"const": ""},
+        {"$ref": "#/$defs/sha256"}
+      ]
+    }
+  }
+}

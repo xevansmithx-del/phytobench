@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use PhytoBench, cite this software and the exact version and freeze receipt you ran."
+title: "PhytoBench: fail-closed plant benchmark intake and leakage auditor"
+type: software
+authors:
+  - family-names: Smith
+    given-names: Evan
+version: 0.1.0-alpha.1
+date-released: 2026-08-23
+license: Apache-2.0
+repository-code: "https://github.com/xevansmithx-del/phytobench"
+url: "https://github.com/xevansmithx-del/phytobench"
+keywords:
+  - plant genomics
+  - benchmarking
+  - data leakage
+  - provenance
+  - reproducible research

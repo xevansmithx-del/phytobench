@@ -1,0 +1,27 @@
+{
+  "schema_version": "phytobench-claim-boundary-v1",
+  "version": "0.1.0a1",
+  "software_status": "adversarially_tested_research_alpha",
+  "locked_causal_rows": 0,
+  "locked_null_rows": 0,
+  "empirical_n": 0,
+  "benchmark_ready": false,
+  "breakthrough_validated": false,
+  "causal_discovery_validated": false,
+  "crop_agnostic_performance_validated": false,
+  "execution_authorized": false,
+  "submission_ready": false,
+  "allowed_claims": [
+    "PhytoBench validates benchmark source, row, split, independence, licensing, blinding, and receipt contracts under synthetic adversarial tests.",
+    "The release reproducibly builds and replays on Python 3.10 through 3.13.",
+    "The official-source discovery queue is metadata-only and contains no promoted biological row."
+  ],
+  "prohibited_claims": [
+    "PhytoBench or PhytoAllele is a scientific breakthrough.",
+    "Any source-discovery record establishes a causal gene.",
+    "Matched decoys or phenotype permutations establish the empirical null denominator.",
+    "The 35/73 minima replace a benchmark-specific power analysis.",
+    "Any gene-editing target, sequence, reagent, experiment, or clinical action is authorized."
+  ],
+  "remaining_blocker": "Licensed primary evidence, historical pre-truth snapshots, independent dual curation, empirical-equivalence nulls, a frozen powered benchmark, and an external-species replication are absent."
+}

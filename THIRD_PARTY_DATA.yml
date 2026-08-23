@@ -1,0 +1,14 @@
+schema_version: phytobench-third-party-data-v1
+embedded_biological_data: false
+empirical_rows: 0
+locked_causal_rows: 0
+locked_null_rows: 0
+policy:
+  - Code is licensed under Apache-2.0.
+  - Third-party data and metadata retain their own terms.
+  - Discovery links are not vendored datasets or rights determinations.
+  - Raw sequence, alignment, variant, phenotype, controlled, and private data are excluded.
+discovery_metadata:
+  file: registry/DISCOVERY_QUEUE.json
+  status: DISCOVERY_ONLY_NOT_LOCKABLE
+  redistribution: provider names, official URLs, high-level terms summaries, and caveats only

@@ -1,0 +1,97 @@
+{
+  "schema_version": "phytobench-discovery-queue-v1",
+  "status": "DISCOVERY_ONLY_NOT_LOCKABLE",
+  "empirical_n": 0,
+  "breakthrough_validated": false,
+  "notice": "These official resources are discovery and identifier-normalization leads only. No entry is a causal or null benchmark row, and every record still requires immutable capture, rights review, primary-paper replay, dual curation, adjudication, leakage review, and independence locking.",
+  "sources": [
+    {
+      "source_id": "discovery:planteome",
+      "provider": "Planteome",
+      "official_url": "https://planteome.org/documents",
+      "reported_terms": "CC BY 4.0 for documented releases",
+      "roles": ["cross-species lead discovery", "ontology normalization"],
+      "caveat": "Experimental annotations are leads; the primary experiment must establish truth."
+    },
+    {
+      "source_id": "discovery:tair-public-releases",
+      "provider": "TAIR",
+      "official_url": "https://phoenixbioinformatics.atlassian.net/wiki/spaces/COM/pages/42216430/TAIR+Terms+of+Use",
+      "reported_terms": "Only specifically designated Public_Data_Releases are CC BY 4.0",
+      "roles": ["Arabidopsis lead discovery", "identifier normalization"],
+      "caveat": "Subscriber releases and substantial service extracts are not presumed redistributable."
+    },
+    {
+      "source_id": "discovery:gene-ontology",
+      "provider": "Gene Ontology Consortium",
+      "official_url": "https://geneontology.org/docs/go-citation-policy/",
+      "reported_terms": "CC BY 4.0",
+      "roles": ["experimental-evidence lead discovery", "process normalization"],
+      "caveat": "Gene-product function annotations are not mutant-trait causal truth."
+    },
+    {
+      "source_id": "discovery:uniprot",
+      "provider": "UniProt",
+      "official_url": "https://www.uniprot.org/help/license",
+      "reported_terms": "CC BY 4.0 for copyrightable database content",
+      "roles": ["stable protein identifiers", "experimental-reference discovery"],
+      "caveat": "Patent and third-party rights remain separate; annotations are not trait truth."
+    },
+    {
+      "source_id": "discovery:expression-atlas",
+      "provider": "EMBL-EBI Expression Atlas",
+      "official_url": "https://www.ebi.ac.uk/gxa/licence.html",
+      "reported_terms": "Database content CC BY 4.0; software Apache-2.0",
+      "roles": ["expression covariates"],
+      "caveat": "Differential expression is not causal validation."
+    },
+    {
+      "source_id": "discovery:crossref",
+      "provider": "Crossref",
+      "official_url": "https://www.crossref.org/documentation/retrieve-metadata/",
+      "reported_terms": "Crossref-generated bibliographic facts and metadata are broadly reusable; embedded abstracts retain publisher or author rights",
+      "roles": ["DOI normalization", "earliest-publication checks", "correction monitoring"],
+      "caveat": "Crossmark and retraction metadata must be checked at freeze time."
+    },
+    {
+      "source_id": "discovery:europe-pmc",
+      "provider": "Europe PMC",
+      "official_url": "https://europepmc.org/RestfulWebService",
+      "reported_terms": "Metadata accessible; OA full text follows each article license",
+      "roles": ["primary-paper discovery", "article-version checks"],
+      "caveat": "Freely viewable text is not automatically redistributable."
+    },
+    {
+      "source_id": "discovery:dryad",
+      "provider": "Dryad",
+      "official_url": "https://datadryad.org/publication_policy",
+      "reported_terms": "Research datasets CC0",
+      "roles": ["replayable primary datasets", "equivalence-null discovery"],
+      "caveat": "Scientific admissibility and independence still require row-level review."
+    },
+    {
+      "source_id": "discovery:zenodo",
+      "provider": "Zenodo",
+      "official_url": "https://about.zenodo.org/policies/",
+      "reported_terms": "Metadata CC0; files follow each record license",
+      "roles": ["versioned datasets", "supplements"],
+      "caveat": "Every file license and exact deposited version must be checked separately."
+    },
+    {
+      "source_id": "discovery:ncbi",
+      "provider": "NCBI",
+      "official_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "reported_terms": "NCBI imposes no molecular-data reuse restriction, but submitter and other rights may remain",
+      "roles": ["assembly and project identifiers", "hash-only raw-data references"],
+      "caveat": "Reference accessions and hashes by default; do not vendor raw payloads."
+    },
+    {
+      "source_id": "discovery:ensembl",
+      "provider": "Ensembl",
+      "official_url": "https://protists.ensembl.org/info/about/legal/disclaimer.html",
+      "reported_terms": "Project-generated data unrestricted; third-party constraints may apply",
+      "roles": ["versioned genome catalogs", "matched-decoy construction"],
+      "caveat": "Preserve each upstream source, release, assembly, and applicable terms."
+    }
+  ]
+}
